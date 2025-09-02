@@ -8,7 +8,23 @@ import { ArrowLeft, Heart, Users, Calendar, MapPin, Clock } from "lucide-react"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 
-const actionsData = {
+interface ActionData {
+  title: string;
+  description: string;
+  fullDescription: string;
+  image: string;
+  goals: string[];
+  howToHelp: string[];
+  schedule: string;
+  location: string;
+  image_url?: string;
+  type?: string;
+  id?: string;
+  date?: string;
+  time?: string;
+}
+
+const actionsData: Record<string, ActionData> = {
   "varal-solidario": {
     title: "Varal Solidário",
     description: "Doação de roupas e agasalhos para famílias necessitadas",
@@ -119,7 +135,13 @@ const actionsData = {
   },
 }
 
-export default function AcaoPage({ params }: { params: { slug: string } }) {
+interface PageProps {
+  params: {
+    slug: string
+  }
+}
+
+export default function AcaoPage({ params }: PageProps) {
   const action = actionsData[params.slug as keyof typeof actionsData]
 
   if (!action) {
