@@ -137,12 +137,11 @@ const actionsData: Record<string, ActionData> = {
   },
 }
 
-interface PageProps {
+export async function generateMetadata({
+  params,
+}: {
   params: { slug: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
-
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+}): Promise<Metadata> {
   const action = actionsData[params.slug as keyof typeof actionsData]
   
   return {
@@ -151,7 +150,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default function AcaoPage({ params }: PageProps) {
+export default function AcaoPage({
+  params,
+}: {
+  params: { slug: string }
+}) {
   const action = actionsData[params.slug as keyof typeof actionsData]
 
   if (!action) {
