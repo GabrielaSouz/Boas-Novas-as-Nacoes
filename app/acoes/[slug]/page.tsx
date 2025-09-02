@@ -136,30 +136,32 @@ const actionsData: Record<string, ActionData> = {
     location: "Praças e espaços públicos do bairro",
   },
 }
-
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
-}): Promise<Metadata> {
-  const action = actionsData[params.slug as keyof typeof actionsData]
-  
-  return {
-    title: action?.title || 'Ação não encontrada',
-    description: action?.description || '',
+interface PageProps {
+  params: {
+    slug: string
   }
 }
 
-export default function AcaoPage({
-  params,
-}: {
-  params: { slug: string }
-}) {
+export async function generateMetadata(
+  { params }: PageProps
+): Promise<Metadata> {
   const action = actionsData[params.slug as keyof typeof actionsData]
+
+  return {
+    title: action?.title || "Ação não encontrada",
+    description: action?.description || "",
+  }
+}
+
+export default function AcaoPage({ params }: PageProps) {
+  const { slug } = params
+
+  const action = actionsData[slug as keyof typeof actionsData]
 
   if (!action) {
     notFound()
   }
+
 
   return (
     <div className="min-h-screen bg-background">
