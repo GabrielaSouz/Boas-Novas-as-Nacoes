@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock, MapPin } from "lucide-react"
@@ -58,7 +58,7 @@ export function AgendaSection() {
 
   const supabase = createClient()
 
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     setLoading(true)
     const { data, error } = await supabase.from("events").select("*").order("date", { ascending: true })
 
@@ -68,11 +68,11 @@ export function AgendaSection() {
       setEvents(data || [])
     }
     setLoading(false)
-  }
+  }, [supabase])
 
   useEffect(() => {
     loadEvents()
-  }, [])
+  }, [loadEvents])
 
   const today = new Date()
   const nextWeek = addDays(today, 7)

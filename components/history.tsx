@@ -72,7 +72,7 @@ return(
         <ScrollReveal delay={600}>
           <div className="text-center mt-8 sm:mt-12">
             <blockquote className="text-lg sm:text-xl md:text-2xl font-medium text-white italic">
-             "Quão formosos são, sobre os montes, os pés do que anuncia as boas novas"
+             &ldquo;Quão formosos são, sobre os montes, os pés do que anuncia as boas novas&rdquo;
             </blockquote>
             <cite className="text-muted-foreground mt-2 block text-sm sm:text-base">Isaías 52:7</cite>
           </div>

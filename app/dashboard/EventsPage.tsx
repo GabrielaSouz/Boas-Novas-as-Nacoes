@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -76,18 +76,18 @@ export default function EventsPage() {
 
   const supabase = createClient()
 
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     const { data, error } = await supabase.from("events").select("*").order("date", { ascending: true })
     if (error) {
       console.error("Erro ao carregar eventos:", error)
     } else {
       setEvents(data || [])
     }
-  }
+  }, [supabase])
 
   useEffect(() => {
     loadEvents()
-  }, [])
+  }, [loadEvents])
 
   const handleAddEvent = async () => {
     if (!newEvent.title || !newEvent.date || !newEvent.time) return

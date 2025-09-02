@@ -22,7 +22,6 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
-  const router = useRouter()
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -47,11 +46,11 @@ export default function SignUpPage() {
     }
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/dashboard`,
+          emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${typeof window !== 'undefined' ? window.location.origin : ''}/dashboard`,
         },
       })
 
@@ -61,7 +60,8 @@ export default function SignUpPage() {
       }
 
       setSuccess(true)
-    } catch (err) {
+    } catch (error) {
+      console.error("Signup error:", error)
       setError("Erro ao criar conta. Tente novamente.")
     } finally {
       setLoading(false)

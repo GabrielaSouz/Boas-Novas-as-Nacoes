@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Edit, Trash2, Save, X, Plus, ImageIcon } from "lucide-react"
-import { format, parseISO, parse } from "date-fns"
+import { format, parse, parseISO } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { createClient } from "@/lib/supabase/client"
 import Image from "next/image"
@@ -65,7 +65,7 @@ export default function GalleryPage() {
 
   const supabase = createClient()
 
-  const loadGalleryPhotos = async () => {
+  const loadGalleryPhotos = useCallback(async () => {
     const { data, error } = await supabase
       .from("gallery_photos")
       .select("*")
@@ -73,39 +73,39 @@ export default function GalleryPage() {
 
     if (error) console.error("Erro ao carregar galeria:", error)
     else setGalleryPhotos(data || [])
-  }
+  }, [supabase])
 
   useEffect(() => {
     loadGalleryPhotos()
-  }, [])
+  }, [loadGalleryPhotos])
 
 
-    const handleAddPhoto = async () => {
-      if (!newPhoto.title || !newPhoto.date_taken) return
-      try {
-        let imageUrl = ""
-        if (eventFile) {
-          const fileExt = eventFile.name.split(".").pop()
-          const fileName = `${Date.now()}.${fileExt}`
-          const filePath = `events/${fileName}`
-          const { error: uploadError } = await supabase.storage
-            .from("images")
-            .upload(filePath, eventFile, { cacheControl: "3600", upsert: false })
-          if (uploadError) throw uploadError
-          const { data: { publicUrl } } = supabase.storage.from("images").getPublicUrl(filePath)
-          imageUrl = publicUrl
-        }
-        await supabase.from("gallery_photos").insert([{ ...newPhoto, image_url: imageUrl }])
-        await loadGalleryPhotos()
-        setNewPhoto({ title: "", description: "", image_url: "", action_type: "varal-solidario", date_taken: "" })
-        setEventFile(null)
-        setIsAddingPhoto(false)
-      } catch (error) {
-        console.error("Erro ao adicionar evento:", error)
+  const handleAddPhoto = useCallback(async () => {
+    if (!newPhoto.title || !newPhoto.date_taken) return
+    try {
+      let imageUrl = ""
+      if (eventFile) {
+        const fileExt = eventFile.name.split(".").pop()
+        const fileName = `${Date.now()}.${fileExt}`
+        const filePath = `events/${fileName}`
+        const { error: uploadError } = await supabase.storage
+          .from("images")
+          .upload(filePath, eventFile, { cacheControl: "3600", upsert: false })
+        if (uploadError) throw uploadError
+        const { data: { publicUrl } } = supabase.storage.from("images").getPublicUrl(filePath)
+        imageUrl = publicUrl
       }
+      await supabase.from("gallery_photos").insert([{ ...newPhoto, image_url: imageUrl }])
+      await loadGalleryPhotos()
+      setNewPhoto({ title: "", description: "", image_url: "", action_type: "varal-solidario", date_taken: "" })
+      setEventFile(null)
+      setIsAddingPhoto(false)
+    } catch (error) {
+      console.error("Erro ao adicionar evento:", error)
     }
+  }, [newPhoto, eventFile, loadGalleryPhotos, supabase])
 
-  const handleUpdatePhoto = async () => {
+  const handleUpdatePhoto = useCallback(async () => {
     if (editingPhoto && newPhoto.title && newPhoto.image_url && newPhoto.date_taken) {
       const { error } = await supabase.from("gallery_photos").update(newPhoto).eq("id", editingPhoto)
       if (error) console.error("Erro ao atualizar foto:", error)
@@ -116,7 +116,7 @@ export default function GalleryPage() {
         setEditingPhoto(null)
       }
     }
-  }
+  }, [editingPhoto, newPhoto, loadGalleryPhotos, supabase])
 
   const handleDeletePhoto = async (id: string) => {
     const { error } = await supabase.from("gallery_photos").delete().eq("id", id)

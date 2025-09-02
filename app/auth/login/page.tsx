@@ -32,7 +32,7 @@ export default function LoginPage() {
     setError("")
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
@@ -44,7 +44,8 @@ export default function LoginPage() {
 
       router.push("/dashboard")
       router.refresh()
-    } catch (err) {
+    } catch (error) {
+      console.error("Login error:", error)
       setError("Erro ao fazer login. Tente novamente.")
     } finally {
       setLoading(false)
