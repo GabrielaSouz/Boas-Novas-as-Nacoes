@@ -1,12 +1,14 @@
+import type { Metadata } from 'next'
+import Image from "next/image"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { ArrowLeft, Heart, Users, Calendar, MapPin, Clock } from "lucide-react"
+
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
-import { ArrowLeft, Heart, Users, Calendar, MapPin, Clock } from "lucide-react"
-import { notFound } from "next/navigation"
-import Image from "next/image"
 
 interface ActionData {
   title: string;
@@ -136,8 +138,16 @@ const actionsData: Record<string, ActionData> = {
 }
 
 interface PageProps {
-  params: {
-    slug: string
+  params: { slug: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const action = actionsData[params.slug as keyof typeof actionsData]
+  
+  return {
+    title: action?.title || 'Ação não encontrada',
+    description: action?.description || '',
   }
 }
 
