@@ -136,11 +136,9 @@ const actionsData: Record<string, ActionData> = {
     location: "Praças e espaços públicos do bairro",
   },
 }
-type Props = {
-  params: { slug: string }
-}
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: { params: { slug: string } }
+): Promise<Metadata> {
   const action = actionsData[params.slug as keyof typeof actionsData]
 
   return {
@@ -149,13 +147,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default function AcaoPage({ params }: Props) {
+export default function AcaoPage(
+  { params }: { params: { slug: string } }
+) {
   const action = actionsData[params.slug as keyof typeof actionsData]
 
   if (!action) {
     notFound()
   }
-
 
   return (
     <div className="min-h-screen bg-background">
