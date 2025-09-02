@@ -136,6 +136,7 @@ const actionsData: Record<string, ActionData> = {
     location: "Praças e espaços públicos do bairro",
   },
 }
+
 export async function generateMetadata(
   { params }: { params: { slug: string } }
 ): Promise<Metadata> {
@@ -155,7 +156,6 @@ export default function AcaoPage(
   if (!action) {
     notFound()
   }
-
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
