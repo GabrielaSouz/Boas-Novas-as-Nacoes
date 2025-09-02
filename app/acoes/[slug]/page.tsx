@@ -136,15 +136,11 @@ const actionsData: Record<string, ActionData> = {
     location: "Praças e espaços públicos do bairro",
   },
 }
-interface PageProps {
-  params: {
-    slug: string
-  }
+type Props = {
+  params: { slug: string }
 }
 
-export async function generateMetadata(
-  { params }: PageProps
-): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const action = actionsData[params.slug as keyof typeof actionsData]
 
   return {
@@ -153,10 +149,8 @@ export async function generateMetadata(
   }
 }
 
-export default function AcaoPage({ params }: PageProps) {
-  const { slug } = params
-
-  const action = actionsData[slug as keyof typeof actionsData]
+export default function AcaoPage({ params }: Props) {
+  const action = actionsData[params.slug as keyof typeof actionsData]
 
   if (!action) {
     notFound()
