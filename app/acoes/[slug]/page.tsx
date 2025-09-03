@@ -136,11 +136,12 @@ const actionsData: Record<string, ActionData> = {
   },
 }
 
-// ✅ Tipando diretamente
+
 export async function generateMetadata(
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
-  const action = actionsData[params.slug as keyof typeof actionsData]
+  const { slug } = await params
+  const action = actionsData[slug as keyof typeof actionsData]
 
   return {
     title: action?.title || "Ação não encontrada",
@@ -148,11 +149,11 @@ export async function generateMetadata(
   }
 }
 
-// ✅ Página com tipagem direta
-export default function AcaoPage(
-  { params }: { params: { slug: string } }
+export default async function AcaoPage(
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const action = actionsData[params.slug as keyof typeof actionsData]
+  const { slug } = await params
+  const action = actionsData[slug as keyof typeof actionsData]
 
   if (!action) {
     notFound()
