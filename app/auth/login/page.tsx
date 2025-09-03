@@ -66,7 +66,7 @@ export default function LoginPage() {
           </Link>
           <div className="relative w-20 h-20 mx-auto mb-4">
             <Image
-              src="/logo-associacao.png"
+              src="/logo.png"
               alt="Logo Associação AD Boas Novas"
               fill
               className="object-contain"
