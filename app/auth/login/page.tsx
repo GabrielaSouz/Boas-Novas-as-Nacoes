@@ -42,8 +42,9 @@ export default function LoginPage() {
         return
       }
 
-      router.push("/dashboard")
-      router.refresh()
+      // Ensure we're using a proper URL format for redirects
+      const redirectTo = new URL("/dashboard", window.location.origin).toString()
+      window.location.href = redirectTo
     } catch (error) {
       console.error("Login error:", error)
       setError("Erro ao fazer login. Tente novamente.")
