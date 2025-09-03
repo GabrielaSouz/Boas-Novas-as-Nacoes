@@ -3,7 +3,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft, Heart, Users, Calendar, MapPin, Clock } from "lucide-react"
-
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -137,14 +136,9 @@ const actionsData: Record<string, ActionData> = {
   },
 }
 
-type PageProps = {
-  params: {
-    slug: string
-  }
-}
-
+// ✅ Tipando diretamente
 export async function generateMetadata(
-  { params }: PageProps
+  { params }: { params: { slug: string } }
 ): Promise<Metadata> {
   const action = actionsData[params.slug as keyof typeof actionsData]
 
@@ -154,12 +148,16 @@ export async function generateMetadata(
   }
 }
 
-export default function AcaoPage({ params }: PageProps) {
+// ✅ Página com tipagem direta
+export default function AcaoPage(
+  { params }: { params: { slug: string } }
+) {
   const action = actionsData[params.slug as keyof typeof actionsData]
 
   if (!action) {
     notFound()
   }
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
