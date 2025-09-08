@@ -43,8 +43,8 @@ const actionsData: Record<string, ActionData> = {
       "Ajude na distribuição às famílias",
       "Divulgue a campanha em suas redes sociais",
     ],
-    schedule: "Toda segunda-feira, das 14h às 17h",
-    location: "Sede da Associação - Rua das Boas Novas, 123",
+    schedule: "Verifique na agenda quando ocorrerá essa ação",
+    location: "Alameda Venus 7-04 Parque Sant Edwirgens Bauru SP",
   },
   "cortes-cabelo": {
     title: "Cortes de Cabelo",
@@ -59,7 +59,7 @@ const actionsData: Record<string, ActionData> = {
       "Ajude na organização dos atendimentos",
       "Indique pessoas que precisam do serviço",
     ],
-    schedule: "Primeiro sábado de cada mês, das 9h às 16h",
+    schedule: "Verifique na agenda quando ocorrerá essa ação",
     location: "Praça Central do bairro",
   },
   "orientacoes-juridicas": {
@@ -79,8 +79,8 @@ const actionsData: Record<string, ActionData> = {
       "Doe materiais de escritório",
       "Divulgue o serviço para quem precisa",
     ],
-    schedule: "Quartas-feiras, das 14h às 18h",
-    location: "Sede da Associação - Sala de Atendimento",
+    schedule: "Verifique na agenda quando ocorrerá essa ação",
+    location: "Alameda Venus 7-04 Parque Sant Edwirgens Bauru SP",
   },
   alimentacao: {
     title: "Alimentação",
@@ -99,8 +99,8 @@ const actionsData: Record<string, ActionData> = {
       "Ajude no preparo das refeições",
       "Participe da distribuição",
     ],
-    schedule: "Terças e quintas-feiras, das 11h às 14h",
-    location: "Cozinha comunitária da Associação",
+    schedule: "Verifique na agenda quando ocorrerá essa ação",
+    location: "Alameda Venus 7-04 Parque Sant Edwirgens Bauru SP",
   },
   "afericao-pressao": {
     title: "Aferição de Pressão",
@@ -115,8 +115,8 @@ const actionsData: Record<string, ActionData> = {
       "Ajude na organização dos atendimentos",
       "Participe de campanhas de prevenção",
     ],
-    schedule: "Sextas-feiras, das 8h às 12h",
-    location: "Sala de atendimento médico da Associação",
+    schedule: "Verifique na agenda quando ocorrerá essa ação",
+    location: "Alameda Venus 7-04 Parque Sant Edwirgens Bauru SP",
   },
   evangelizacao: {
     title: "Evangelização",
@@ -131,8 +131,8 @@ const actionsData: Record<string, ActionData> = {
       "Contribua com equipamentos de som",
       "Ore pela obra evangelística",
     ],
-    schedule: "Domingos, das 16h às 18h",
-    location: "Praças e espaços públicos do bairro",
+    schedule: "Verifique na agenda quando ocorrerá essa ação",
+    location: "Alameda Venus 7-04 Parque Sant Edwirgens Bauru SP",
   },
 }
 

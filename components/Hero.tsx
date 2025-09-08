@@ -7,62 +7,65 @@ import { Heart } from "lucide-react"
 
 export function Hero() {
   return (
-    <section className="relative bg-[url('/hero-desktop.png')] bg-cover bg-no-repeat bg-center min-h-[80vh] flex items-center px-4 text-center overflow-hidden">
-       <div className="absolute inset-0 bg-black/40"></div>
+    <section className="relative min-h-[80vh] flex items-center px-4 overflow-hidden bg-[url('/hero-bg.jpg')] bg-cover bg-center">
+      <div className="absolute inset-0 bg-black/40"></div>
       <ParallaxSection speed={0.3}>
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
       </ParallaxSection>
 
-      <div className="container mx-auto max-w-4xl relative z-10">
-        <ScrollReveal direction="fade" delay={200}>
-          <div className="mb-6 sm:mb-8">
-          {/* <div className="relative w-42 h-42 sm:w-38 sm:h-38 mx-auto ">
+      <div className="container mx-auto max-w-6xl relative z-10 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          {/* Texto → Esquerda em telas grandes */}
+          <ScrollReveal direction="fade" delay={200} className="order-2 md:order-1">
+            <div className="text-center md:text-left space-y-6">
+              <h1 className="text-2xl lg:text-3xl font-bold leading-tight text-white">
+                Associação Assembleia de Deus
+                <span className="block text-3xl lg:text-5xl mt-2 text-white">
+                  Boas Novas às Nações
+                </span>
+              </h1>
+              <p className="text-lg text-white/90 max-w-xl mx-auto md:mx-0">
+                Transformando vidas através do amor de Jesus Cristo
+              </p>
+
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-4">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-[#FCA815] hover:bg-[#FCA815]/90 text-base sm:text-lg px-6 sm:px-8 py-3 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  <Link href="/doacao">
+                    <Heart className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    Fazer Doação
+                  </Link>
+                </Button>
+
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="text-black bg-white hover:bg-white/50 text-base sm:text-lg px-6 sm:px-8 py-3 hover:scale-105 transition-all duration-300"
+                >
+                  <Link href="#agenda-section">Próximas Ações</Link>
+                </Button>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          {/* Imagem → Direita em telas grandes */}
+          <ScrollReveal direction="fade" delay={400} className="order-1 md:order-2">
+            <div className="relative w-full aspect-square max-w-xl mx-auto">
               <Image
                 src="/logo.png"
                 alt="Logo Associação AD Boas Novas às Nações"
                 fill
-                className="object-contain "
+                className="object-contain"
                 priority
+                sizes="(max-width: 768px) 90vw, 50vw"
               />
-            </div> */}
-            <h1 className="mt-12 text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 text-balance leading-tight">
-              Associação Assembleia de Deus
-              <span className="block text-4xl lg:text-6xl mt-2">
-                Boas Novas às Nações
-              </span>
-              
-            </h1>
-            <p className="text-base md:text-lg text-muted-foreground mb-6 sm:mb-8 text-pretty max-w-3xl mx-auto px-4">
-              Propagando o amor de Jesus Cristo com responsabilidade social às
-              pessoas carentes
-            </p>
-            
-          </div>
-        </ScrollReveal>
-
-        <ScrollReveal direction="up" delay={400}>
-          <div className="flex flex-row items-center justify-center gap-6 mx-auto">
-            <Button
-              asChild
-              size="lg"
-              className="bg-[#FCA815] hover:bg-[#FCA815]/90  text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              <Link href="/doacao">
-                <Heart className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                Fazer Doação
-              </Link>
-            </Button>
-            
-            <Button
-              asChild
-             
-              size="lg"
-              className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4  hover:scale-105 transition-all duration-300"
-            >
-              <Link href="#historia">Conheça Nossa História</Link>
-            </Button>
-          </div>
-        </ScrollReveal>
+            </div>
+          </ScrollReveal>
+        </div>
       </div>
     </section>
   )

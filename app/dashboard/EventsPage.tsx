@@ -26,14 +26,15 @@ interface Event {
   time: string
   location: string
   type:
-    | "varal-solidario"
-    | "cortes-cabelo"
-    | "orientacoes-juridicas"
-    | "alimentacao"
-    | "afericao-pressao"
-    | "musica"
-    | "aula-de-canto"
-    | "reforco-pedagogico"
+  | "varal-solidario"
+  | "cortes-cabelo"
+  | "orientacoes-juridicas"
+  | "alimentacao"
+  | "afericao-pressao"
+  | "musica"
+  | "aula-de-canto"
+  | "reforco-pedagogico"
+  | "momento-comunhao"
   image_url?: string
 }
 
@@ -46,6 +47,7 @@ const typeColors = {
   musica: "bg-yellow-100 text-yellow-800 border-yellow-200",
   "aula-de-canto": "bg-green-100 text-green-800 border-green-200",
   "reforco-pedagogico": "bg-blue-100 text-blue-800 border-blue-200",
+  "momento-comunhao": "bg-pink-100 text-pink-800 border-pink-200",
 }
 
 const typeLabels = {
@@ -57,6 +59,7 @@ const typeLabels = {
   musica: "Música",
   "aula-de-canto": "Aula de Canto",
   "reforco-pedagogico": "Reforço Pedagógico",
+  "momento-comunhao": "Momento de Comunhão",
 }
 
 export default function EventsPage() {
@@ -85,8 +88,31 @@ export default function EventsPage() {
     }
   }, [supabase])
 
+  // Function to check the database schema for the events table
+  const checkDatabaseSchema = async () => {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_enum_values', { enum_name: 'event_type' })
+        .single();
+
+      if (error) throw error;
+      console.log('Allowed event types from database:', data);
+    } catch (schemaError) {
+      console.log('Could not fetch enum values, trying information_schema...', schemaError);
+      // Fallback to information_schema if the function doesn't exist
+      const { data, error: infoError } = await supabase
+        .from('information_schema.columns')
+        .select('udt_name, column_default')
+        .eq('table_name', 'events')
+        .eq('column_name', 'type');
+
+      console.log('Column type information:', { data, error: infoError });
+    }
+  };
+
   useEffect(() => {
-    loadEvents()
+    loadEvents();
+    checkDatabaseSchema();
   }, [loadEvents])
 
   const handleAddEvent = async () => {
@@ -104,7 +130,37 @@ export default function EventsPage() {
         const { data: { publicUrl } } = supabase.storage.from("images").getPublicUrl(filePath)
         imageUrl = publicUrl
       }
-      await supabase.from("events").insert([{ ...newEvent, image_url: imageUrl }])
+
+      // Ensure the event type is properly formatted
+      const eventToSave = {
+        ...newEvent,
+        type: newEvent.type as Event["type"], // Ensure type matches the Event type
+        image_url: imageUrl
+      };
+
+      console.log("Tentando salvar evento:", eventToSave);
+
+      // Log the complete response
+      const response = await supabase
+        .from("events")
+        .insert([eventToSave])
+        .select();
+
+      console.log("Resposta completa do Supabase:", response);
+
+      if (response.error) {
+        console.error("Erro ao salvar evento:", {
+          message: response.error.message,
+          details: response.error.details,
+          hint: response.error.hint,
+          code: response.error.code,
+          error: response.error
+        });
+        return;
+      }
+
+      console.log("Evento salvo com sucesso:", response.data);
+
       await loadEvents()
       setNewEvent({ title: "", description: "", date: "", time: "", location: "", type: "varal-solidario" })
       setEventFile(null)
@@ -116,12 +172,45 @@ export default function EventsPage() {
 
   const handleUpdateEvent = async () => {
     if (editingEvent && newEvent.title && newEvent.date && newEvent.time) {
-      const { error } = await supabase.from("events").update(newEvent).eq("id", editingEvent)
-      if (!error) {
+      try {
+        let imageUrl = newEvent.image_url || "" // mantém a imagem antiga por padrão
+
+        // se tiver nova imagem selecionada, faz o upload
+        if (eventFile) {
+          const fileExt = eventFile.name.split(".").pop()
+          const fileName = `${Date.now()}.${fileExt}`
+          const filePath = `events/${fileName}`
+          const { error: uploadError } = await supabase.storage
+            .from("images")
+            .upload(filePath, eventFile, { cacheControl: "3600", upsert: false })
+          if (uploadError) throw uploadError
+          const { data: { publicUrl } } = supabase.storage.from("images").getPublicUrl(filePath)
+          imageUrl = publicUrl
+        }
+
+        const eventToUpdate = {
+          ...newEvent,
+          type: newEvent.type as Event["type"],
+          image_url: imageUrl
+        };
+
+        const { error } = await supabase
+          .from("events")
+          .update(eventToUpdate)
+          .eq("id", editingEvent)
+
+        if (error) {
+          console.error("Erro ao atualizar evento:", error)
+          return
+        }
+
         await loadEvents()
-        setNewEvent({ title: "", description: "", date: "", time: "",image_url: "", location: "", type: "varal-solidario" })
+        setNewEvent({ title: "", description: "", date: "", time: "", image_url: "", location: "", type: "varal-solidario" })
+        setEventFile(null) // limpa a seleção de imagem
         setIsAddingEvent(false)
         setEditingEvent(null)
+      } catch (err) {
+        console.error("Erro ao atualizar evento:", err)
       }
     }
   }
@@ -199,11 +288,11 @@ export default function EventsPage() {
               </div>
               <div>
                 <Label>Horário</Label>
-                <TimePicker 
-                  value={newEvent.time} 
-                  onChange={(value) => setNewEvent({ ...newEvent, time: value || '' })} 
-                  format="HH:mm" 
-                  disableClock 
+                <TimePicker
+                  value={newEvent.time}
+                  onChange={(value) => setNewEvent({ ...newEvent, time: value || '' })}
+                  format="HH:mm"
+                  disableClock
                 />
               </div>
               <div>
@@ -212,7 +301,35 @@ export default function EventsPage() {
               </div>
               <div>
                 <Label>Imagem</Label>
-                <Input type="file" accept="image/*" onChange={(e) => setEventFile(e.target.files?.[0] ?? null)} />
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setEventFile(e.target.files?.[0] ?? null)}
+                />
+
+                {/* Pré-visualização quando está editando e já existe uma imagem */}
+                {editingEvent && newEvent.image_url && !eventFile && (
+                  <div className="relative w-full h-40 mt-2">
+                    <Image
+                      src={newEvent.image_url}
+                      alt="Imagem atual"
+                      fill
+                      className="object-cover rounded"
+                    />
+                  </div>
+                )}
+
+                {/* Pré-visualização da nova imagem selecionada */}
+                {eventFile && (
+                  <div className="relative w-full h-40 mt-2">
+                    <Image
+                      src={URL.createObjectURL(eventFile)}
+                      alt="Pré-visualização"
+                      fill
+                      className="object-cover rounded"
+                    />
+                  </div>
+                )}
               </div>
             </div>
 

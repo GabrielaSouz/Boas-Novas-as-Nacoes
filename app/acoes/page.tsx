@@ -24,7 +24,7 @@ const actions = [
     slug: "varal-solidario",
     details:
       "Arrecadamos e distribuímos roupas, calçados e agasalhos para pessoas em situação de vulnerabilidade social.",
-    frequency: "Toda segunda-feira",
+    frequency: "Verifique na agenda disponibilidade",
     location: "Sede da Associação",
   },
   {
@@ -34,7 +34,7 @@ const actions = [
     slug: "cortes-cabelo",
     details:
       "Oferecemos serviços gratuitos de corte de cabelo com profissionais voluntários para a comunidade carente.",
-    frequency: "Sábados quinzenais",
+      frequency: "Verifique na agenda disponibilidade",
     location: "Praça Central",
   },
   {
@@ -44,7 +44,7 @@ const actions = [
     slug: "orientacoes-juridicas",
     details:
       "Advogados voluntários oferecem orientação jurídica gratuita em questões trabalhistas, previdenciárias e familiares.",
-    frequency: "Quartas-feiras",
+      frequency: "Verifique na agenda disponibilidade",
     location: "Sede da Associação",
   },
   {
@@ -53,7 +53,7 @@ const actions = [
     icon: Utensils,
     slug: "alimentacao",
     details: "Distribuímos cestas básicas e refeições prontas para famílias em situação de insegurança alimentar.",
-    frequency: "Diariamente",
+    frequency: "Verifique na agenda disponibilidade",
     location: "Múltiplos pontos da cidade",
   },
   {
@@ -62,7 +62,7 @@ const actions = [
     icon: Stethoscope,
     slug: "afericao-pressao",
   details: "Profissionais da saúde voluntários oferecem mediçao da pressão arterial e orientações sobre cuidados preventivos.",
-    frequency: "Sextas-feiras",
+  frequency: "Verifique na agenda disponibilidade",
     location: "Centro Comunitário",
   },
   {
@@ -72,7 +72,7 @@ const actions = [
     slug: "evangelizacao",
     details:
       "Realizamos cultos ao ar livre, visitas domiciliares e eventos evangelísticos para compartilhar o amor de Cristo.",
-    frequency: "Domingos",
+      frequency: "Verifique na agenda disponibilidade",
     location: "Diversos bairros",
   },
 ]

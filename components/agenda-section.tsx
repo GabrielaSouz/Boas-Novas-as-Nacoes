@@ -26,6 +26,7 @@ interface Event {
   | "musica"
   | "aula-de-canto"
   | "reforco-pedagogico"
+  | "momento-comunhao"
   image_url?: string
 }
 
@@ -38,6 +39,7 @@ const typeColors = {
   musica: "bg-yellow-100 text-yellow-800 border-yellow-200",
   "aula-de-canto": "bg-green-100 text-green-800 border-green-200",
   "reforco-pedagogico": "bg-blue-100 text-blue-800 border-blue-200",
+  "momento-comunhao": "bg-pink-100 text-pink-800 border-pink-200",
 }
 
 const typeLabels = {
@@ -49,7 +51,8 @@ const typeLabels = {
   musica: "Música",
   "aula-de-canto": "Aula de Canto",
   "reforco-pedagogico": "Reforço Pedagógico",
-}
+  "momento-comunhao": "Momento de Comunhão",
+  }
 
 export function AgendaSection() {
   const [filter, setFilter] = useState<string>("all")
@@ -106,7 +109,7 @@ export function AgendaSection() {
   }
 
   return (
-    <section className="py-16 px-4 bg-card">
+    <section id="agenda-section" className="py-16 px-4 bg-card">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Próximas Ações</h2>

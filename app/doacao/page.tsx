@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Heart, CreditCard, Smartphone, Building, Users, Utensils, GraduationCap } from "lucide-react"
+import Image from "next/image"
 
 const impactCards = [
   {
@@ -78,7 +79,7 @@ export default function DoacaoPage() {
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-4 text-secondary">Realize Sua Doação</h2>
-            <p className="text-muted-foreground">Você pode fazer sua doação através de transferência bancária</p>
+            <p className="text-muted-foreground">Você pode fazer sua doação através de transferência bancária ou pix</p>
           </div>
 
           <Card className="max-w-md mx-auto">
@@ -112,6 +113,9 @@ export default function DoacaoPage() {
               </div>
             </CardContent>
           </Card>
+         <div className="flex justify-center my-6">
+         <Image src="/qr code.jpg" alt="PIX" width={450} height={450} className="rounded-lg" />
+         </div>
         </div>
       </section>
 

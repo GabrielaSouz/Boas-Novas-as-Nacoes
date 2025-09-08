@@ -21,6 +21,7 @@ export interface Event {
     | "musica"
     | "aula-de-canto"
     | "reforco-pedagogico"
+    | "momento-comunhao"
   participants?: number // opcional (caso venha do Supabase)
   image_url?: string
 }

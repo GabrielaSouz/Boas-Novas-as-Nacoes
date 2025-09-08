@@ -37,18 +37,18 @@ export function Navigation() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative w-14 h-14 group-hover:scale-110 transition-transform duration-300">
-              <Image
-                src="/logo.png"
-                alt="Logo Associação Assembléia de Deus Boas Novas às Nações"
-                fill
-                className="object-contain"
-                priority
-              />
+               <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                            <Image
+                              src="/logo_branco.jpg"
+                              alt="Logo"
+                              width={64}
+                              height={64}
+                              className="object-cover w-full h-full"
+                            />
             </div>
             <div className="hidden sm:block">
               <span className="font-bold text-sm lg:text-lg group-hover:text-[#F5A618] transition-colors">Associação Assembléia de Deus </span>
-              <p className="text-xs text-muted-foreground">Boas Novas às Nações</p>
+              <p className="text-xs text-muted-foreground">Boas Novas as Nações</p>
             </div>
           </Link>
 

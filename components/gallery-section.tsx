@@ -18,17 +18,11 @@ import { createClient } from "@/lib/supabase/client";
 import { useCallback } from "react";
 
 interface GalleryPhoto {
-  id: string;
+  id?: string;
   title: string;
   description: string;
-  image_url: string;
-  action_type:
-  | "varal-solidario"
-  | "cortes-cabelo"
-  | "orientacoes-juridicas"
-  | "alimentacao"
-  | "afericao-pressao"
- 
+  image_urls: string[];  // nunca null
+  action_type: "varal-solidario" | "cortes-cabelo" | "orientacoes-juridicas" | "alimentacao" | "afericao-pressao";
   date_taken: string;
 }
 
@@ -67,11 +61,16 @@ export function GallerySection() {
       .from("gallery_photos")
       .select("*")
       .order("date_taken", { ascending: false });
-
+  
     if (error) {
       console.error("Erro ao carregar galeria:", error);
     } else {
-      setPhotos(data || []);
+      setPhotos(
+        (data || []).map((photo) => ({
+          ...photo,
+          image_urls: photo.image_urls ?? [], // <-- garante array
+        }))
+      );
     }
     setLoading(false);
   }, [supabase]);
@@ -82,11 +81,11 @@ export function GallerySection() {
 
   const filteredPhotos = photos.filter((photo) => {
     if (filter === "all") return true;
-    if (filter === "varal-solidario") return photo.action_type !== "varal-solidario";
-    if (filter === "cortes-cabelo") return photo.action_type !== "cortes-cabelo";
-    if (filter === "orientacoes-juridicas") return photo.action_type !== "orientacoes-juridicas";
-    if (filter === "alimentacao") return photo.action_type !== "alimentacao";
-    if (filter === "afericao-pressao") return photo.action_type !== "afericao-pressao";
+    if (filter === "varal-solidario") return photo.action_type === "varal-solidario";
+    if (filter === "cortes-cabelo") return photo.action_type === "cortes-cabelo";
+    if (filter === "orientacoes-juridicas") return photo.action_type === "orientacoes-juridicas";
+    if (filter === "alimentacao") return photo.action_type === "alimentacao";
+    if (filter === "afericao-pressao") return photo.action_type === "afericao-pressao";
 
     return true;
   });
@@ -125,8 +124,8 @@ export function GallerySection() {
             <button
               onClick={() => setFilter("all")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === "all"
-                  ? "bg-blue-800 text-white"
-                  : "bg-muted text-white hover:bg-muted/80"
+                ? "bg-blue-800 text-white"
+                : "bg-muted text-white hover:bg-muted/80"
                 }`}
             >
               Todas as Ações
@@ -134,8 +133,8 @@ export function GallerySection() {
             <button
               onClick={() => setFilter("varal-solidario")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === "varal-solidario"
-                  ? "bg-blue-800 text-white"
-                  : "bg-muted text-white hover:bg-muted/80"
+                ? "bg-blue-800 text-white"
+                : "bg-muted text-white hover:bg-muted/80"
                 }`}
             >
               Varal Solidário
@@ -143,8 +142,8 @@ export function GallerySection() {
             <button
               onClick={() => setFilter("cortes-cabelo")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === "cortes-cabelo"
-                  ? "bg-blue-800 text-white"
-                  : "bg-muted text-white hover:bg-muted/80"
+                ? "bg-blue-800 text-white"
+                : "bg-muted text-white hover:bg-muted/80"
                 }`}
             >
               Cortes de Cabelo
@@ -152,8 +151,8 @@ export function GallerySection() {
             <button
               onClick={() => setFilter("orientacoes-juridicas")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === "orientacoes-juridicas"
-                  ? "bg-blue-800 text-white"
-                  : "bg-muted text-white hover:bg-muted/80"
+                ? "bg-blue-800 text-white"
+                : "bg-muted text-white hover:bg-muted/80"
                 }`}
             >
               Orientação Jurídica
@@ -161,8 +160,8 @@ export function GallerySection() {
             <button
               onClick={() => setFilter("alimentacao")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === "alimentacao"
-                  ? "bg-blue-800 text-white"
-                  : "bg-muted text-white hover:bg-muted/80"
+                ? "bg-blue-800 text-white"
+                : "bg-muted text-white hover:bg-muted/80"
                 }`}
             >
               Alimentação
@@ -170,8 +169,8 @@ export function GallerySection() {
             <button
               onClick={() => setFilter("afericao-pressao")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === "afericao-pressao"
-                  ? "bg-blue-800 text-white"
-                  : "bg-muted text-white hover:bg-muted/80"
+                ? "bg-blue-800 text-white"
+                : "bg-muted text-white hover:bg-muted/80"
                 }`}
             >
               Aferição de Pressão
@@ -189,12 +188,11 @@ export function GallerySection() {
               >
                 <div className="relative overflow-hidden rounded-t-lg">
                   <Image
-                    src={photo.image_url || "/placeholder.svg"}
+                    src={photo.image_urls?.[0] || "/placeholder.svg"} // capa = 1ª imagem
                     alt={photo.title}
                     width={1200}
                     height={384}
                     className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                    style={{ objectFit: "cover" }}
                     priority
                   />
 
@@ -218,11 +216,9 @@ export function GallerySection() {
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4 text-primary" />
                     <span>
-                      {format(
-                        parseISO(photo.date_taken),
-                        "dd 'de' MMM 'de' yyyy",
-                        { locale: ptBR }
-                      )}
+                      {format(parseISO(photo.date_taken), "dd 'de' MMM 'de' yyyy", {
+                        locale: ptBR,
+                      })}
                     </span>
                   </div>
                 </CardContent>
@@ -246,45 +242,41 @@ export function GallerySection() {
 
       {selectedPhoto && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="bg-background rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+          <div className="bg-background rounded-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b">
               <div>
                 <h3 className="text-lg font-semibold">{selectedPhoto.title}</h3>
                 <p className="text-sm text-muted-foreground">
-                  {format(
-                    parseISO(selectedPhoto.date_taken),
-                    "dd 'de' MMMM 'de' yyyy",
-                    { locale: ptBR }
-                  )}
+                  {format(parseISO(selectedPhoto.date_taken), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
                 </p>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSelectedPhoto(null)}
-              >
+              <Button variant="ghost" size="icon" onClick={() => setSelectedPhoto(null)}>
                 <X className="h-4 w-4" />
               </Button>
             </div>
 
-            <Image
-              src={selectedPhoto.image_url || "/placeholder.svg"}
-              alt={selectedPhoto.title}
-              width={1200}
-              height={384}
-              className="w-full h-96 object-cover"
-              style={{ objectFit: "cover" }}
-              priority
-            />
-          </div>
-
-          <div className="p-4">
-            <div className="mb-4">
-              <Badge className={typeColors[selectedPhoto.action_type]}>
-                {typeLabels[selectedPhoto.action_type]}
-              </Badge>
+            {/* várias imagens */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+              {selectedPhoto.image_urls?.map((url, idx) => (
+                <Image
+                  key={idx}
+                  src={url}
+                  alt={`${selectedPhoto.title} - ${idx + 1}`}
+                  width={1200}
+                  height={384}
+                  className="w-full h-62 object-cover rounded-lg"
+                />
+              ))}
             </div>
-            <p className="text-muted-foreground">{selectedPhoto.description}</p>
+
+            <div className="p-4">
+              <div className="mb-4">
+                <Badge className={typeColors[selectedPhoto.action_type]}>
+                  {typeLabels[selectedPhoto.action_type]}
+                </Badge>
+              </div>
+              <p className="text-muted-foreground">{selectedPhoto.description}</p>
+            </div>
           </div>
         </div>
       )}

@@ -11,27 +11,27 @@ const contactInfo = [
   {
     icon: Mail,
     title: "E-mail",
-    content: "contato@adboasnovas.org",
-    description: "Resposta em até 24 horas",
+    content: "boasnovasasnacoesbauru@outlook.com",
+    description: "Resposta em até 42 horas",
   },
   {
     icon: Phone,
     title: "Telefone",
-    content: "(11) 99999-9999",
+    content: "(14) 99168-7545",
     description: "Segunda a sexta, 9h às 18h",
   },
   {
     icon: MapPin,
     title: "Endereço",
-    content: "Rua das Boas Novas, 123",
-    description: "São Paulo - SP, CEP 00000-000",
+    content: "Alameda Venus 7-04",
+    description: "Parque Sant Edwirgens Bauru SP",
   },
-  {
-    icon: Clock,
-    title: "Horário de Funcionamento",
-    content: "Segunda a Sexta: 9h às 18h",
-    description: "Sábado: 9h às 12h",
-  },
+  // {
+  //   icon: Clock,
+  //   title: "Horário de Funcionamento",
+  //   content: "Segunda a Sexta: 9h às 17h",
+  //   description: "Sábado: 9h às 12h",
+  // },
 ]
 
 const socialLinks = [
@@ -47,12 +47,12 @@ const socialLinks = [
     url: "#",
     color: "hover:text-pink-600",
   },
-  {
-    icon: Youtube,
-    name: "YouTube",
-    url: "#",
-    color: "hover:text-red-600",
-  },
+  // {
+  //   icon: Youtube,
+  //   name: "YouTube",
+  //   url: "#",
+  //   color: "hover:text-red-600",
+  // },
 ]
 
 export default function ContatoPage() {
@@ -78,7 +78,7 @@ export default function ContatoPage() {
       {/* Contact Info Cards */}
       <section className="py-12 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {contactInfo.map((info, index) => {
               const IconComponent = info.icon
               return (
@@ -181,9 +181,9 @@ export default function ContatoPage() {
                     <ul className="list-disc list-inside text-muted-foreground space-y-1">
                       <li>Distribuição de alimentos</li>
                       <li>Organização de eventos</li>
-                      <li>Apoio administrativo</li>
+                     
                       <li>Evangelização</li>
-                      <li>Assistência social</li>
+                      
                     </ul>
                   </div>
                 </CardContent>
@@ -228,19 +228,19 @@ export default function ContatoPage() {
                     <div className="flex items-start space-x-3">
                       <MapPin className="h-5 w-5 text-accent mt-0.5" />
                       <div>
-                        <p className="font-medium">Rua das Boas Novas, 123</p>
-                        <p className="text-muted-foreground text-sm">Bairro Centro</p>
-                        <p className="text-muted-foreground text-sm">São Paulo - SP, CEP 00000-000</p>
+                        <p className="font-medium">Alameda Venus 7-04</p>
+                        <p className="text-muted-foreground text-sm">Parque Sant Edwirgens</p>
+                        <p className="text-muted-foreground text-sm">Bauru -  SP</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
+                    {/* <div className="flex items-center space-x-3">
                       <Clock className="h-5 w-5 text-accent" />
                       <div>
                         <p className="font-medium">Horário de Atendimento</p>
-                        <p className="text-muted-foreground text-sm">Segunda a Sexta: 9h às 18h</p>
+                        <p className="text-muted-foreground text-sm">Segunda a Sexta: 9h às 17h</p>
                         <p className="text-muted-foreground text-sm">Sábado: 9h às 12h</p>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </CardContent>
               </Card>

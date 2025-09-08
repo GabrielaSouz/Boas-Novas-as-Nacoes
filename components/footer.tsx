@@ -17,19 +17,28 @@ export function Footer() {
           {/* Logo e Descrição */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2 group">
-              <div className="flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-               <Image src="/logo.png" alt="Logo" className="bg-white rounded-full" width={50} height={50} />
-             <div className="flex flex-col p-3">
-              <span className="font-bold text-xl group-hover:text-secondary transition-colors">Associação Assembleia de Deus</span>
-              <span className="font-bold text-xl group-hover:text-secondary transition-colors">Boas Novas às Nações</span>
-            </div>
+              <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+                <Image
+                  src="/logo_branco.jpg"
+                  alt="Logo"
+                  width={64}
+                  height={64}
+                  className="object-cover w-full h-full"
+                />
               </div>
+              <div className="flex flex-col p-3">
+                <span className="font-bold md:text-xl text-xs group-hover:text-secondary transition-colors">
+                  Associação Assembleia de Deus
+                </span>
+                <span className="font-bold md:text-xl text-xs group-hover:text-secondary transition-colors">
+                  Boas Novas as Nações
+                </span>
+              </div>
+
             </div>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Propagando as Boas Novas às Nações com responsabilidade social e amor cristão.
-            </p>
+           
             <p className="text-secondary font-medium text-sm italic">
-                Quão formosos são, sobre os montes, os pés do que anuncia as boas novas - Isaías 52:7
+              Quão formosos são, sobre os montes, os pés do que anuncia as boas novas - Isaías 52:7
             </p>
           </div>
 
@@ -65,7 +74,7 @@ export function Footer() {
                 href="/dashboard"
                 className="block text-muted-foreground hover:text-secondary transition-all duration-300 hover:translate-x-1"
               >
-               Login
+                Login
               </Link>
             </div>
           </div>
@@ -77,7 +86,7 @@ export function Footer() {
               <div className="flex items-center space-x-2 group">
                 <Mail className="h-4 w-4 text-accent group-hover:scale-110 transition-transform duration-300" />
                 <span className="text-muted-foreground text-sm group-hover:text-secondary transition-colors">
-                  contato@adboasnovas.org
+                boasnovasasnacoesbauru@outlook.com
                 </span>
               </div>
 
@@ -85,7 +94,7 @@ export function Footer() {
                 <p className="text-sm font-medium">Siga-nos:</p>
                 <div className="flex space-x-3">
                   <Link
-                    href="#"
+                    href="https://www.facebook.com/Adboasnovasoficiall/"
                     className="text-muted-foreground hover:text-accent transition-all duration-300 hover:scale-125 hover:-translate-y-1"
                   >
                     <Facebook className="h-5 w-5" />
@@ -96,12 +105,12 @@ export function Footer() {
                   >
                     <Instagram className="h-5 w-5" />
                   </Link>
-                  <Link
+                  {/* <Link
                     href="#"
                     className="text-muted-foreground hover:text-accent transition-all duration-300 hover:scale-125 hover:-translate-y-1"
                   >
                     <Youtube className="h-5 w-5" />
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             </div>

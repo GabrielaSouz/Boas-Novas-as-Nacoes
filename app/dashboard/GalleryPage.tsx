@@ -15,19 +15,19 @@ import { createClient } from "@/lib/supabase/client"
 import Image from "next/image"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
-
+import { useDropzone } from "react-dropzone"
 
 interface GalleryPhoto {
   id?: string
   title: string
   description: string
-  image_url: string
+  image_urls: string[] //varias imagens
   action_type:
-    | "varal-solidario"
-    | "cortes-cabelo"
-    | "orientacoes-juridicas"
-    | "alimentacao"
-    | "afericao-pressao"
+  | "varal-solidario"
+  | "cortes-cabelo"
+  | "orientacoes-juridicas"
+  | "alimentacao"
+  | "afericao-pressao"
 
   date_taken: string
 }
@@ -54,14 +54,15 @@ export default function GalleryPage() {
   const [galleryPhotos, setGalleryPhotos] = useState<GalleryPhoto[]>([])
   const [isAddingPhoto, setIsAddingPhoto] = useState(false)
   const [editingPhoto, setEditingPhoto] = useState<string | null>(null)
-  const [eventFile, setEventFile] = useState<File | null>(null)
+  const [eventFile, setEventFile] = useState<File[]>([])
   const [newPhoto, setNewPhoto] = useState<GalleryPhoto>({
     title: "",
     description: "",
-    image_url: "",
+    image_urls: [],
     action_type: "varal-solidario",
     date_taken: "",
   })
+
 
   const supabase = createClient()
 
@@ -83,22 +84,44 @@ export default function GalleryPage() {
   const handleAddPhoto = useCallback(async () => {
     if (!newPhoto.title || !newPhoto.date_taken) return
     try {
-      let imageUrl = ""
-      if (eventFile) {
-        const fileExt = eventFile.name.split(".").pop()
-        const fileName = `${Date.now()}.${fileExt}`
+      let imageUrls: string[] = []
+      for (const file of eventFile) {
+        const fileExt = file.name.split(".").pop()
+        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`
         const filePath = `events/${fileName}`
         const { error: uploadError } = await supabase.storage
           .from("images")
-          .upload(filePath, eventFile, { cacheControl: "3600", upsert: false })
+          .upload(filePath, file, { cacheControl: "3600", upsert: false })
+
         if (uploadError) throw uploadError
         const { data: { publicUrl } } = supabase.storage.from("images").getPublicUrl(filePath)
-        imageUrl = publicUrl
+        imageUrls.push(publicUrl)
       }
-      await supabase.from("gallery_photos").insert([{ ...newPhoto, image_url: imageUrl }])
+
+      // Ensure we have at least one image
+      if (imageUrls.length === 0) {
+        throw new Error('Por favor, adicione pelo menos uma imagem')
+      }
+
+      const { error: insertError } = await supabase
+        .from("gallery_photos")
+        .insert([{
+          title: newPhoto.title,
+          description: newPhoto.description,
+          action_type: newPhoto.action_type,
+          date_taken: newPhoto.date_taken,
+          image_urls: imageUrls, // Send as array, Supabase will handle JSON serialization
+        }])
+        .select()
+
+      if (insertError) {
+        console.error('Error saving to database:', insertError)
+        throw insertError
+      }
+
       await loadGalleryPhotos()
-      setNewPhoto({ title: "", description: "", image_url: "", action_type: "varal-solidario", date_taken: "" })
-      setEventFile(null)
+      setNewPhoto({ title: "", description: "", image_urls: [], action_type: "varal-solidario", date_taken: "" })
+      setEventFile([])
       setIsAddingPhoto(false)
     } catch (error) {
       console.error("Erro ao adicionar evento:", error)
@@ -106,15 +129,61 @@ export default function GalleryPage() {
   }, [newPhoto, eventFile, loadGalleryPhotos, supabase])
 
   const handleUpdatePhoto = useCallback(async () => {
-    if (editingPhoto && newPhoto.title && newPhoto.image_url && newPhoto.date_taken) {
-      const { error } = await supabase.from("gallery_photos").update(newPhoto).eq("id", editingPhoto)
-      if (error) console.error("Erro ao atualizar foto:", error)
-      else {
-        await loadGalleryPhotos()
-        setNewPhoto({ title: "", description: "", image_url: "", action_type: "varal-solidario", date_taken: "" })
-        setIsAddingPhoto(false)
-        setEditingPhoto(null)
+    if (!editingPhoto) {
+      console.error("Nenhuma foto selecionada para edição")
+      return
+    }
+
+    try {
+      const { title, description, action_type, date_taken, image_urls } = newPhoto
+
+      if (!title || !date_taken) {
+        console.error("Título e data são obrigatórios")
+        return
       }
+
+      console.log("Atualizando foto com os dados:", {
+        id: editingPhoto,
+        title,
+        description,
+        action_type,
+        date_taken,
+        image_urls: Array.isArray(image_urls) ? image_urls : []
+      });
+
+      const updateData = {
+        title,
+        description,
+        action_type,
+        date_taken,
+        image_urls: Array.isArray(image_urls) ? image_urls : []
+      };
+
+      const { data, error } = await supabase
+        .from("gallery_photos")
+        .update(updateData)
+        .eq("id", editingPhoto)
+        .select()
+        .single()
+
+      if (error) {
+        console.error("Erro ao atualizar foto no Supabase:", {
+          error,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+          message: error.message
+        });
+        throw error;
+      }
+
+      console.log("Foto atualizada com sucesso:", data)
+      await loadGalleryPhotos()
+      setNewPhoto({ title: "", description: "", image_urls: [], action_type: "varal-solidario", date_taken: "" })
+      setIsAddingPhoto(false)
+      setEditingPhoto(null)
+    } catch (error) {
+      console.error("Erro ao processar atualização:", error)
     }
   }, [editingPhoto, newPhoto, loadGalleryPhotos, supabase])
 
@@ -125,10 +194,42 @@ export default function GalleryPage() {
   }
 
   const handleEditPhoto = (photo: GalleryPhoto) => {
-    setNewPhoto(photo)
+    // Ensure we have a clean copy of the photo data
+    setNewPhoto({
+      id: photo.id,
+      title: photo.title || '',
+      description: photo.description || '',
+      action_type: photo.action_type || 'varal-solidario',
+      date_taken: photo.date_taken || '',
+      image_urls: Array.isArray(photo.image_urls) ? [...photo.image_urls] : []
+    })
     setEditingPhoto(photo.id!)
     setIsAddingPhoto(true)
   }
+
+  function ImageUploader({ onFiles }: { onFiles: (files: File[]) => void }) {
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+      accept: { "image/*": [] },
+      multiple: true,
+      onDrop: (acceptedFiles) => onFiles(acceptedFiles),
+    })
+
+    return (
+      <div
+        {...getRootProps()}
+        className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition 
+          ${isDragActive ? "border-primary bg-primary/10" : "border-gray-300 hover:border-primary"}`}
+      >
+        <input {...getInputProps()} />
+        {isDragActive ? (
+          <p className="text-primary font-medium">Solte as imagens aqui...</p>
+        ) : (
+          <p>Arraste e solte imagens aqui, ou clique para selecionar</p>
+        )}
+      </div>
+    )
+  }
+
 
   return (
     <div>
@@ -182,26 +283,70 @@ export default function GalleryPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <Label>Imagem</Label>
-                <Input type="file" accept="image/*" onChange={(e) => setEventFile(e.target.files?.[0] ?? null)} />
+              <div>
+                <Label>Imagens</Label>
+
+                {/* Componente drag & drop */}
+                <ImageUploader onFiles={(files) => setEventFile(files)} />
+
+                {/* Pré-visualização das imagens já salvas no banco */}
+                {editingPhoto && newPhoto.image_urls.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                    {newPhoto.image_urls.map((url, idx) => (
+                      <div key={`saved-${idx}`} className="relative w-full h-32">
+                        <Image
+                          src={url}
+                          alt={`saved-${idx}`}
+                          fill
+                          className="object-cover rounded"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Pré-visualização das novas imagens selecionadas */}
+                {eventFile.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                    {eventFile.map((file, idx) => (
+                      <div key={`new-${idx}`} className="relative w-full h-32 group">
+                        <Image
+                          src={URL.createObjectURL(file)}
+                          alt={`preview-${idx}`}
+                          fill
+                          className="object-cover rounded"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEventFile(eventFile.filter((_, i) => i !== idx))
+                          }}
+                          className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="date-taken">Data da Ação</Label>
-                              <DatePicker
-                                selected={newPhoto.date_taken ? parse(newPhoto.date_taken, 'yyyy-MM-dd', new Date()) : null}
-                                onChange={(date: Date | null) => {
-                                  if (date) {
-                                    const formattedDate = format(date, 'yyyy-MM-dd')
-                                    setNewPhoto({ ...newPhoto, date_taken: formattedDate })
-                                  }
-                                }}
-                                dateFormat="dd/MM/yyyy"
-                                locale={ptBR}
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                placeholderText="Selecione uma data"
-                              />
-                            </div>
+                <DatePicker
+                  selected={newPhoto.date_taken ? parse(newPhoto.date_taken, 'yyyy-MM-dd', new Date()) : null}
+                  onChange={(date: Date | null) => {
+                    if (date) {
+                      const formattedDate = format(date, 'yyyy-MM-dd')
+                      setNewPhoto({ ...newPhoto, date_taken: formattedDate })
+                    }
+                  }}
+                  dateFormat="dd/MM/yyyy"
+                  locale={ptBR}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholderText="Selecione uma data"
+                />
+              </div>
             </div>
 
             <div className="flex gap-2">
@@ -220,59 +365,60 @@ export default function GalleryPage() {
 
       {/* Gallery List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {galleryPhotos.map((photo) => (
-    <Card
-      key={photo.id}
-      className="hover:shadow-lg transition-shadow overflow-hidden"
-    >
-      {/* Container fixo */}
-      <div className="relative w-full h-48 md:h-60 lg:h-72">
-        <Image
-          src={photo.image_url || "/placeholder.svg"}
-          alt={photo.title}
-          fill
-          className="object-cover rounded-t-lg"
-        />
-        <div className="absolute top-2 right-2 flex gap-2">
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => handleEditPhoto(photo)}
+        {galleryPhotos.map((photo) => (
+          <Card
+            key={photo.id ?? photo.title}
+            className="hover:shadow-lg transition-shadow overflow-hidden"
           >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => handleDeletePhoto(photo.id!)}
-            className="text-destructive hover:text-destructive"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
+            {/* Container fixo */}
+            <div className="relative w-full h-48 md:h-60 lg:h-72">
+              <div className="grid grid-cols-2 gap-2 p-2">
+                {(photo.image_urls || []).slice(0, 4).map((url, idx) => (
+                  <div key={idx} className="relative w-full h-32">
+                    <Image src={url} alt={photo.title} fill className="object-cover rounded" />
+                  </div>
+                ))}
+              </div>
+              <div className="absolute top-2 right-2 flex gap-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => handleEditPhoto(photo)}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => handleDeletePhoto(photo.id!)}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            <CardHeader>
+              <Badge className={typeColors[photo.action_type]}>
+                {typeLabels[photo.action_type]}
+              </Badge>
+              <CardTitle className="text-lg">{photo.title}</CardTitle>
+              <CardDescription>{photo.description}</CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Calendar className="h-4 w-4 text-primary" />
+                <span>
+                  {format(parseISO(photo.date_taken), "dd 'de' MMMM 'de' yyyy", {
+                    locale: ptBR,
+                  })}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-
-      <CardHeader>
-        <Badge className={typeColors[photo.action_type]}>
-          {typeLabels[photo.action_type]}
-        </Badge>
-        <CardTitle className="text-lg">{photo.title}</CardTitle>
-        <CardDescription>{photo.description}</CardDescription>
-      </CardHeader>
-
-      <CardContent>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Calendar className="h-4 w-4 text-primary" />
-          <span>
-            {format(parseISO(photo.date_taken), "dd 'de' MMMM 'de' yyyy", {
-              locale: ptBR,
-            })}
-          </span>
-        </div>
-      </CardContent>
-    </Card>
-  ))}
-</div>
     </div>
   )
 }
