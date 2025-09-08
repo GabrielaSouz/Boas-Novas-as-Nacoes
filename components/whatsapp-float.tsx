@@ -5,19 +5,25 @@ import { MessageCircle, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function WhatsAppFloat() {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(true) // Changed to true to show by default
   const [isExpanded, setIsExpanded] = useState(false)
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true)
-    }, 2000) // Aparece após 2 segundos
+    // Show immediately on component mount
+    setIsVisible(true)
+    
+    // Auto-expand after 3 seconds
+    const expandTimer = setTimeout(() => {
+      setIsExpanded(true)
+    }, 3000)
 
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(expandTimer)
+    }
   }, [])
 
   const handleWhatsAppClick = () => {
-    const phoneNumber = "5511999999999" // Substitua pelo número real da associação
+    const phoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
     const message = encodeURIComponent(
       "Olá! Gostaria de saber mais sobre as ações da Associação AD Boas Novas às Nações.",
     )
@@ -48,7 +54,12 @@ export function WhatsAppFloat() {
                   <p className="text-xs text-muted-foreground">Online agora</p>
                 </div>
               </div>
-              <Button variant="ghost" size="sm" onClick={toggleExpanded} className="h-6 w-6 p-0 hover:bg-muted">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleExpanded}
+                className="h-6 w-6 p-0 hover:bg-muted"
+              >
                 <X className="h-3 w-3" />
               </Button>
             </div>
@@ -66,25 +77,27 @@ export function WhatsAppFloat() {
         )}
 
         {/* Main WhatsApp Button */}
-        <div className="relative">
-          <Button
-            onClick={isExpanded ? handleWhatsAppClick : toggleExpanded}
-            className="w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 animate-bounce-in"
-            style={{ animationDelay: "0.5s" }}
-          >
-            <MessageCircle className="h-6 w-6" />
-          </Button>
+        {isVisible && (
+          <div className="relative">
+            <Button
+              onClick={toggleExpanded}
+              className="w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 animate-bounce-in"
+              style={{ animationDelay: "0.5s" }}
+            >
+              <MessageCircle className="h-6 w-6" />
+            </Button>
 
-          {/* Pulse Animation */}
-          <div className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-20"></div>
+            {/* Pulse Animation */}
+            <div className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-20"></div>
 
-          {/* Notification Badge */}
-          {!isExpanded && (
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-              <span className="text-xs text-white font-bold">1</span>
-            </div>
-          )}
-        </div>
+            {/* Notification Badge - Only show when not expanded */}
+            {!isExpanded && (
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                <span className="text-xs text-white font-bold">1</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Backdrop for mobile */}
