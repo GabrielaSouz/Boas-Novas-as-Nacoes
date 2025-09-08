@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Edit, Trash2, Save, X, Plus, ImageIcon } from "lucide-react"
+import { Calendar, Edit, Trash2, Save, X, Plus } from "lucide-react"
 import { format, parse, parseISO } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { createClient } from "@/lib/supabase/client"
@@ -80,11 +80,19 @@ export default function GalleryPage() {
     loadGalleryPhotos()
   }, [loadGalleryPhotos])
 
+  const checkDatabaseSchema = useCallback(async () => {
+    // Function implementation here
+  }, [supabase])
+
+  useEffect(() => {
+    checkDatabaseSchema()
+  }, [checkDatabaseSchema])
+
 
   const handleAddPhoto = useCallback(async () => {
     if (!newPhoto.title || !newPhoto.date_taken) return
     try {
-      let imageUrls: string[] = []
+      const imageUrls: string[] = []
       for (const file of eventFile) {
         const fileExt = file.name.split(".").pop()
         const fileName = `${Date.now()}-${Math.random()}.${fileExt}`

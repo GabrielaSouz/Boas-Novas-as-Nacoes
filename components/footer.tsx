@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Mail, Facebook, Instagram, Youtube, Heart, ArrowUp } from "lucide-react"
+import { Mail, Facebook, Instagram, ArrowUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 

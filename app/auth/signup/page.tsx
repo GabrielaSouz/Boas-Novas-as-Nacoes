@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useState } from "react"
 import { createBrowserClient } from "@supabase/ssr"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
