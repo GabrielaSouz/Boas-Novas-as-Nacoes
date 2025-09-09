@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Mail, Phone, MapPin, Send, Facebook, Instagram } from "lucide-react"
+import { Mail, Phone, MapPin, Send, Facebook, Instagram, Youtube } from "lucide-react"
 
 const contactInfo = [
   {
@@ -38,21 +38,21 @@ const socialLinks = [
   {
     icon: Facebook,
     name: "Facebook",
-    url: "#",
+    url: "https://www.facebook.com/Adboasnovasoficiall?mibextid=wwXIfr&rdid=dOc80RZUxt7vk4Ox&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1ANKrv7F5T%2F%3Fmibextid%3DwwXIfr#",
     color: "hover:text-blue-600",
   },
   {
     icon: Instagram,
     name: "Instagram",
-    url: "#",
+    url: "https://www.instagram.com/adboasnovasoficiall/?igsh=eWV3ZTNyNnRtM240&utm_source=qr#",
     color: "hover:text-pink-600",
   },
-  // {
-  //   icon: Youtube,
-  //   name: "YouTube",
-  //   url: "#",
-  //   color: "hover:text-red-600",
-  // },
+  {
+    icon: Youtube,
+    name: "YouTube",
+    url: "https://www.youtube.com/@ADBoasNovasAsNa%C3%A7%C3%B5es",
+    color: "hover:text-red-600",
+  },
 ]
 
 export default function ContatoPage() {
@@ -120,46 +120,61 @@ export default function ContatoPage() {
                     Formulário de Contato
                   </CardTitle>
                 </CardHeader>
+
                 <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">Nome</Label>
-                      <Input id="firstName" placeholder="Seu nome" />
+                  {/* FORMULARIO */}
+                  <form
+                    action="https://formsubmit.co/adboasnovasbauru1@gmail.com"
+                    method="POST"
+                    className="space-y-6"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">Nome</Label>
+                        <Input id="firstName" name="Nome" placeholder="Seu nome" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Sobrenome</Label>
+                        <Input id="lastName" name="Sobrenome" placeholder="Seu sobrenome" required />
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Sobrenome</Label>
-                      <Input id="lastName" placeholder="Seu sobrenome" />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="email">E-mail</Label>
+                        <Input id="email" name="Email" type="email" placeholder="seu@email.com" required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Telefone</Label>
+                        <Input id="phone" name="Telefone" placeholder="(11) 99999-9999" />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email">E-mail</Label>
-                      <Input id="email" type="email" placeholder="seu@email.com" />
+                      <Label htmlFor="subject">Assunto</Label>
+                      <Input id="subject" name="Assunto" placeholder="Sobre o que você gostaria de falar?" />
                     </div>
+
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Telefone</Label>
-                      <Input id="phone" placeholder="(11) 99999-9999" />
+                      <Label htmlFor="message">Mensagem</Label>
+                      <Textarea id="message" name="Mensagem" placeholder="Escreva sua mensagem aqui..." rows={6} required />
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="subject">Assunto</Label>
-                    <Input id="subject" placeholder="Sobre o que você gostaria de falar?" />
-                  </div>
+                    {/* Optional: Redirecionamento após envio */}
+                    <input type="hidden" name="_next" value="http://localhost:3000/obrigado" />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="message">Mensagem</Label>
-                    <Textarea id="message" placeholder="Escreva sua mensagem aqui..." rows={6} />
-                  </div>
+                    {/* Optional: Desabilitar Captcha do FormSubmit */}
+                    <input type="hidden" name="_captcha" value="false" />
 
-                  <Button className="w-full h-12 text-lg bg-primary hover:bg-primary/90">
-                    <Send className="mr-2 h-5 w-5" />
-                    Enviar Mensagem
-                  </Button>
+                    <Button type="submit" className="w-full h-12 text-lg bg-primary hover:bg-primary/90">
+                      <Send className="mr-2 h-5 w-5" />
+                      Enviar Mensagem
+                    </Button>
+                  </form>
                 </CardContent>
               </Card>
             </div>
+
 
             {/* Additional Info */}
             <div className="space-y-8">
@@ -181,9 +196,9 @@ export default function ContatoPage() {
                     <ul className="list-disc list-inside text-muted-foreground space-y-1">
                       <li>Distribuição de alimentos</li>
                       <li>Organização de eventos</li>
-                     
+
                       <li>Evangelização</li>
-                      
+
                     </ul>
                   </div>
                 </CardContent>

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Mail, Facebook, Instagram, ArrowUp } from "lucide-react"
+import { Mail, Facebook, Instagram, ArrowUp, Youtube } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
@@ -94,23 +94,23 @@ export function Footer() {
                 <p className="text-sm font-medium">Siga-nos:</p>
                 <div className="flex space-x-3">
                   <Link
-                    href="https://www.facebook.com/Adboasnovasoficiall/"
+                    href="https://www.facebook.com/Adboasnovasoficiall?mibextid=wwXIfr&rdid=dOc80RZUxt7vk4Ox&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1ANKrv7F5T%2F%3Fmibextid%3DwwXIfr#"
                     className="text-muted-foreground hover:text-accent transition-all duration-300 hover:scale-125 hover:-translate-y-1"
                   >
                     <Facebook className="h-5 w-5" />
                   </Link>
                   <Link
-                    href="#"
+                    href="https://www.instagram.com/adboasnovasoficiall/?igsh=eWV3ZTNyNnRtM240&utm_source=qr#"
                     className="text-muted-foreground hover:text-accent transition-all duration-300 hover:scale-125 hover:-translate-y-1"
                   >
                     <Instagram className="h-5 w-5" />
                   </Link>
-                  {/* <Link
-                    href="#"
+                  <Link
+                    href="https://www.youtube.com/@ADBoasNovasAsNa%C3%A7%C3%B5es"
                     className="text-muted-foreground hover:text-accent transition-all duration-300 hover:scale-125 hover:-translate-y-1"
                   >
                     <Youtube className="h-5 w-5" />
-                  </Link> */}
+                  </Link>
                 </div>
               </div>
             </div>
