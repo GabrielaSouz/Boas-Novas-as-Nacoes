@@ -189,16 +189,19 @@ export default function ResetPasswordPage() {
       setTimeout(() => {
         window.location.href = "/auth/login";
       }, 3000);
-
-    } catch (error: any) {
+      
+    } catch (error: unknown) {
       console.error("Erro ao redefinir senha:", error);
-      setMessage({
-        text: error.message || "Ocorreu um erro ao redefinir sua senha. Por favor, tente novamente.",
-        type: "error"
+      const err = error as { message?: string };
+      setMessage({ 
+        text: err.message || "Ocorreu um erro ao redefinir sua senha. Por favor, tente novamente.", 
+        type: "error" 
       });
     } finally {
       setLoading(false);
     }
+    
+    
   };
 
   // Função para renderizar mensagens de forma estilizada

@@ -1,6 +1,4 @@
-import Link from "next/link"
 
-import { Card, CardContent } from "@/components/ui/card"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { AgendaSection } from "@/components/agenda-section"
