@@ -161,7 +161,7 @@ export default function ContatoPage() {
                     </div>
 
                     {/* Optional: Redirecionamento após envio */}
-                    <input type="hidden" name="_next" value="http://localhost:3000/obrigado" />
+                    <input type="hidden" name="_next" value="https://www.adboasnovas.org/obrigado" />
 
                     {/* Optional: Desabilitar Captcha do FormSubmit */}
                     <input type="hidden" name="_captcha" value="false" />
