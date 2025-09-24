@@ -124,7 +124,7 @@ export default function ContatoPage() {
                 <CardContent className="space-y-6">
                   {/* FORMULARIO */}
                   <form
-                    action="https://formsubmit.co/adboasnovasbauru1@gmail.com"
+                    action="https://formsubmit.co/boasnovasasnacoesbauru@outlook.com"
                     method="POST"
                     className="space-y-6"
                   >
